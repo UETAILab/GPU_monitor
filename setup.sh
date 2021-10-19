@@ -1,6 +1,5 @@
 pip3 install -r requirements.txt
 current_dir="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-echo $current_dir
 
 #write out current crontab
 crontab -l > mycron
