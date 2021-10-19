@@ -56,30 +56,39 @@ def get_gpu_info():
     Get list of gpu and their info
     """
     GPU_UTILS_COMMAND = f"nvidia-smi --query-gpu={','.join([util[1] for util in GPU_UTILS])} --format=csv"
-
-    gpu_info_outputs = sp.check_output(GPU_UTILS_COMMAND.split()).decode("ascii").split("\n")[1:-1]
-
-    return [get_single_gpu_info_from_output(gpu_info_output) for gpu_info_output in gpu_info_outputs]
-
+    
+    try:
+        gpu_info_outputs = sp.check_output(GPU_UTILS_COMMAND.split()).decode("ascii").split("\n")[1:-1]
+        return [get_single_gpu_info_from_output(gpu_info_output) for gpu_info_output in gpu_info_outputs]
+    except Exception as e:
+        print(e)
+        return []
 
 def get_cpu_info():
     """
     Get the cpu usage in percentage per cpu cores
     Example output: [7.9, 9.3, 9.1, 30.0, 8.8, 7.0, 9.8, 62.6]
     """
-    return psutil.cpu_percent(interval=1, percpu=True)
-
+    try:
+        return psutil.cpu_percent(interval=1, percpu=True)
+    except Exception as e:
+        print(e)
+        return []
 
 def get_disk_info():
     """
     Get system disk usage information
     """
-    disk_memory = psutil.disk_usage("/")
-    return {
-        "total_memory": disk_memory.total / 2**30,
-        "used_memory": disk_memory.used / 2**30,
-        "free_memory": disk_memory.free / 2**30
-    }
+    try:
+        disk_memory = psutil.disk_usage("/")
+        return {
+            "total_memory": disk_memory.total / 2**30,
+            "used_memory": disk_memory.used / 2**30,
+            "free_memory": disk_memory.free / 2**30
+        }
+    except Exception as e:
+        print(e)
+        return {}
 
 
 def get_machine_full_info():
@@ -147,7 +156,7 @@ if __name__ == "__main__":
     gpu_info = data.get("gpu_info")
     if gpu_info is not None:
         gpu_details = json.dumps(gpu_info, indent=4)
-        usage = sum([gpu.get("used_memory") for gpu in gpu_info]) / len(gpu_info)
+        usage = sum([gpu.get("used_memory") for gpu in gpu_info]) / len(gpu_info) if len(gpu_info) > 0 else 999999999
         if usage <= args.gpu_memory_threshold:
             for receiver_email in args.receiver_email_list:
                 """Send alert email if gpu is inactive"""
