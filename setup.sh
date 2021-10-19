@@ -1,3 +1,7 @@
+sudo apt update -y
+sudo apt install python3-pip -y
+pip3 --version
+
 pip3 install -r requirements.txt
 current_dir="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
