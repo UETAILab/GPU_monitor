@@ -7,6 +7,10 @@ The script will add a cronjob to a server to
 + Send report to a specified endpoint
 + Send alert email if gpu is not used
 
+## Requirements
+- Python 3.6 or above
+- nvidia-smi installed on the machine
+
 ## How to run
 ```
 git clone https://github.com/UETAILab/GPU_monitor
